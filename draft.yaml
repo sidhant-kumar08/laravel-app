@@ -1,0 +1,19 @@
+models:
+  # ...
+  Category:
+      name: string:20
+      description: string:100
+      user_id: id
+
+  Product:
+      name: string:20
+      price: integer
+      category_id: id
+
+controllers:
+  # ...
+  Category:
+    resource: api.index, api.store, api.show, api.update, api.destroy
+  
+  Product:
+    resource: api.index, api.store, api.show, api.update, api.destroy
