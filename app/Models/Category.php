@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class User extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -17,10 +18,9 @@ class User extends Model
      */
     protected $fillable = [
         'name',
-        'email',
+        'description',
+        'user_id',
     ];
-
-    protected $hidden = ["email"];
 
     /**
      * Get the attributes that should be cast.
@@ -31,6 +31,7 @@ class User extends Model
     {
         return [
             'id' => 'integer',
+            'user_id' => 'integer',
         ];
     }
 
@@ -39,8 +40,8 @@ class User extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function categories(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(Category::class);
+        return $this->belongsTo(User::class);
     }
 }

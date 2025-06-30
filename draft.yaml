@@ -3,17 +3,30 @@ models:
   Category:
       name: string:20
       description: string:100
-      user_id: id
+      user_id: id foreign
+      relationships:
+        hasMany: Product
 
   Product:
       name: string:20
       price: integer
-      category_id: id
+      category_id: id foreign
+      user_id: id foreign
+      relationships:
+        belongsToMany: Category, User
+
+  User:
+      name: string:24
+      email: string
+      relationships: 
+        hasMany: Product, Category
 
 controllers:
   # ...
   Category:
-    resource: api.index, api.store, api.show, api.update, api.destroy
+    resource: api
   
   Product:
-    resource: api.index, api.store, api.show, api.update, api.destroy
+    resource: api
+
+seeders: Category, Product

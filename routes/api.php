@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
+use App\Http\Requests\CategoryStoreRequest;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -9,21 +16,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('/test', function (Request $request){
-    $name = $request->input('name');
-    $email = $request->input('email');
+Route::apiResource('categories', App\Http\Controllers\CategoryController::class);
+Route::get('categories/getUser/{category}', [CategoryController::class, "getRelatedUser"]);
 
 
+Route::apiResource('products', App\Http\Controllers\ProductController::class);
+Route::get('products/getCategory/{product}', [ProductController::class, "getCategory"]);
+Route::get('products/getUser/{product}', [ProductController::class, "getRelatedUser"]);
 
-    return response()->json(["name" => $name, "email" => $email],200);
-});
+Route::post('user', [UserController::class, 'store']);
 
-Route::get('/test', function (Request $request){
-    Log::info("Request Received");
-    $name = "Sidhant";
-    $email = "test@test.com";
-
-
-
-    return response()->json(["name" => $name, "email" => $email],200);
-});
