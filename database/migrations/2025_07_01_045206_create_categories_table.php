@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('product_user', function (Blueprint $table) {
-            $table->foreignId('product_id');
-            $table->foreignId('user_id');
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50);
+            $table->string('description');
+            $table->foreignId('user_id')->constrained();
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_user');
+        Schema::dropIfExists('categories');
     }
 };

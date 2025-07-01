@@ -25,4 +25,3 @@ Route::get('products/getCategory/{product}', [ProductController::class, "getCate
 Route::get('products/getUser/{product}', [ProductController::class, "getRelatedUser"]);
 
 Route::post('user', [UserController::class, 'store']);
-

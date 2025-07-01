@@ -1,19 +1,20 @@
 models:
   # ...
   Category:
-      name: string:20
-      description: string:100
+      name: string:50
+      description: string
       user_id: id foreign
       relationships:
         hasMany: Product
 
   Product:
-      name: string:20
+      name: string:50
+      description: string
       price: integer
       category_id: id foreign
       user_id: id foreign
       relationships:
-        belongsToMany: Category, User
+        belongsTo: Category, User
 
   User:
       name: string:24

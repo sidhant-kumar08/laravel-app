@@ -7,21 +7,50 @@ use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+
+//custom
+
+use App\Helpers\AppHelper;
+
 class ProductController extends Controller
 {
-    public function index(Request $request): ProductCollection
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $userId = AppHelper::checkUserIdInRequest($request);
+
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        if (!$userId) {
+            return new JsonResponse(["message" => "invalid user id"], 400);
+        }
+
+        $products = Product::where("user_id", $userId)->get();
 
         return new ProductCollection($products);
     }
 
-    public function store(ProductStoreRequest $request): ProductResource
+    public function store(ProductStoreRequest $request)
     {
-        $product = Product::create($request->validated());
+
+        $userId = AppHelper::checkUserIdInRequest($request);
+
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+
+        $product = Product::create($request->validated() + ["user_id" => $userId]);
 
         return new ProductResource($product);
     }
@@ -31,26 +60,40 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    public function update(ProductUpdateRequest $request, Product $product): ProductResource
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        $product->update($request->validated());
+        $userId = AppHelper::checkUserIdInRequest($request);
+
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        if ($product->user_id == $userId) {
+            $product->update($request->validated());
+        } else {
+            return new JsonResponse(["message" => "Not authorized"], 401);
+        }
 
         return new ProductResource($product);
     }
 
-    public function destroy(Request $request, Product $product): Response
+    public function destroy(Request $request, Product $product)
     {
-        $product->delete();
+        $userId = AppHelper::checkUserIdInRequest($request);
 
-        return response()->noContent();
-    }
+        $user = User::find($userId);
 
-    public function getCategory(Request $request, Product $product){
-        return $product->category;
-    }
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
 
-    public function getRelatedUser(Request $request, Product $product)
-    {
-        return $product->user;
+        if ($product->user_id == $userId) {
+            $product->delete();
+            return response()->noContent();
+        } else {
+            return response()->json(["message" => "Not Authorized"], 401);
+        }
     }
 }

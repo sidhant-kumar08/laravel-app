@@ -20,8 +20,6 @@ class User extends Model
         'email',
     ];
 
-    protected $hidden = ["email"];
-
     /**
      * Get the attributes that should be cast.
      *

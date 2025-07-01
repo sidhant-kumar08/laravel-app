@@ -44,12 +44,14 @@ final class ProductControllerTest extends TestCase
     public function store_saves(): void
     {
         $name = fake()->name();
+        $description = fake()->text();
         $price = fake()->numberBetween(-10000, 10000);
         $category = Category::factory()->create();
         $user = User::factory()->create();
 
         $response = $this->post(route('products.store'), [
             'name' => $name,
+            'description' => $description,
             'price' => $price,
             'category_id' => $category->id,
             'user_id' => $user->id,
@@ -57,6 +59,7 @@ final class ProductControllerTest extends TestCase
 
         $products = Product::query()
             ->where('name', $name)
+            ->where('description', $description)
             ->where('price', $price)
             ->where('category_id', $category->id)
             ->where('user_id', $user->id)
@@ -96,12 +99,14 @@ final class ProductControllerTest extends TestCase
     {
         $product = Product::factory()->create();
         $name = fake()->name();
+        $description = fake()->text();
         $price = fake()->numberBetween(-10000, 10000);
         $category = Category::factory()->create();
         $user = User::factory()->create();
 
         $response = $this->put(route('products.update', $product), [
             'name' => $name,
+            'description' => $description,
             'price' => $price,
             'category_id' => $category->id,
             'user_id' => $user->id,
@@ -113,6 +118,7 @@ final class ProductControllerTest extends TestCase
         $response->assertJsonStructure([]);
 
         $this->assertEquals($name, $product->name);
+        $this->assertEquals($description, $product->description);
         $this->assertEquals($price, $product->price);
         $this->assertEquals($category->id, $product->category_id);
         $this->assertEquals($user->id, $product->user_id);

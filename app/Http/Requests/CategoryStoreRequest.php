@@ -22,7 +22,6 @@ class CategoryStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:20'],
             'description' => ['required', 'string', 'max:100'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -18,6 +17,7 @@ class Product extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'price',
         'category_id',
         'user_id',
@@ -35,16 +35,6 @@ class Product extends Model
             'category_id' => 'integer',
             'user_id' => 'integer',
         ];
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class);
-    }
-
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
     }
 
     public function category(): BelongsTo

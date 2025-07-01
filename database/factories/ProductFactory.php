@@ -24,9 +24,10 @@ class ProductFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'price' => fake()->numberBetween(-10000, 10000),
-            'category_id' => 1,
-            'user_id' => 1,
+            'description' => fake()->text(),
+            'price' => fake()->numberBetween(0, 10000),
+            'category_id' => Category::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

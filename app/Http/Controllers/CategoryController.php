@@ -7,21 +7,46 @@ use App\Http\Requests\CategoryUpdateRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\JsonResponse as HttpFoundationJsonResponse;
+
+
+//custom
+use App\Helpers\AppHelper;
+
+use function PHPUnit\Framework\isEmpty;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request): CategoryCollection
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $userId = AppHelper::checkUserIdInRequest($request);
+
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        $categories = Category::where("user_id", $userId)->get();
 
         return new CategoryCollection($categories);
     }
 
-    public function store(CategoryStoreRequest $request): CategoryResource
+    public function store(CategoryStoreRequest $request)
     {
-        $category = Category::create($request->validated());
+        $userId = AppHelper::checkUserIdInRequest($request);
+
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        $category = Category::create($request->validated() + ["user_id" => $userId]);
 
         return new CategoryResource($category);
     }
@@ -31,22 +56,39 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function update(CategoryUpdateRequest $request, Category $category): CategoryResource
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $category->update($request->validated());
+        $userId = AppHelper::checkUserIdInRequest($request);
 
-        return new CategoryResource($category);
+        $user = User::find($userId);
+
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        if ($category->user_id == $userId) {
+            $category->update($request->validated());
+            return new CategoryResource($category);
+        } else {
+            return response()->json(["message" => "Not Authorized"], 401);
+        }
     }
 
-    public function destroy(Request $request, Category $category): Response
+    public function destroy(Request $request, Category $category)
     {
-        $category->delete();
+        $userId = AppHelper::checkUserIdInRequest($request);
 
-        return response()->noContent();
-    }
+        $user = User::find($userId);
 
-    public function getRelatedUser(Request $request, Category $category)
-    {
-        return $category->user;
+        if (!$userId || !$user) {
+            return response()->json(["message" => "Invalid user"], 400);
+        }
+
+        if ($category->user_id == $userId) {
+            $category->delete();
+            return response()->noContent();
+        } else {
+            return response()->json(["message" => "Not Authorized"], 401);
+        }
     }
 }
