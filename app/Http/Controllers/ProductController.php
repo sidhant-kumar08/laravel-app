@@ -14,8 +14,9 @@ use Illuminate\Http\Response;
 
 
 //custom
-
 use App\Helpers\AppHelper;
+
+
 
 class ProductController extends Controller
 {
@@ -23,17 +24,15 @@ class ProductController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
-        $user = User::find($userId);
-
-        if (!$userId || !$user) {
-            return response()->json(["message" => "Invalid user"], 400);
-        }
-
-        if (!$userId) {
-            return new JsonResponse(["message" => "invalid user id"], 400);
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
         }
 
         $products = Product::where("user_id", $userId)->get();
+
+        if($products->isEmpty()){
+            return response()->json(["message" => "No data found"], 404);//user_id is not exist in that product table
+        }
 
         return new ProductCollection($products);
     }
@@ -43,9 +42,13 @@ class ProductController extends Controller
 
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -64,9 +67,13 @@ class ProductController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -83,9 +90,13 @@ class ProductController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -97,3 +108,4 @@ class ProductController extends Controller
         }
     }
 }
+

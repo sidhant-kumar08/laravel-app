@@ -25,9 +25,13 @@ class CategoryController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -40,9 +44,13 @@ class CategoryController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -60,9 +68,13 @@ class CategoryController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 
@@ -78,9 +90,13 @@ class CategoryController extends Controller
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
+        if ($userId == -1) {
+            return response()->json(["message" => "Please provide userId"], 400);
+        }
+
         $user = User::find($userId);
 
-        if (!$userId || !$user) {
+        if (!$user) {
             return response()->json(["message" => "Invalid user"], 400);
         }
 

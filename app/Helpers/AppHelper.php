@@ -11,7 +11,7 @@ class AppHelper
         if ($request->has("user_id")) {
             return $request->query("user_id");
         } else {
-            abort(400, "Please provide a userId");
+            return -1;
         }
     }
 }
