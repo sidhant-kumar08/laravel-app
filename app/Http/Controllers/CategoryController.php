@@ -21,7 +21,7 @@ use function PHPUnit\Framework\isEmpty;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request) : CategoryCollection|JsonResponse
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -40,7 +40,7 @@ class CategoryController extends Controller
         return new CategoryCollection($categories);
     }
 
-    public function store(CategoryStoreRequest $request)
+    public function store(CategoryStoreRequest $request) : CategoryResource|JsonResponse
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -64,7 +64,7 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function update(CategoryUpdateRequest $request, Category $category)
+    public function update(CategoryUpdateRequest $request, Category $category) : CategoryResource|JsonResponse
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -86,7 +86,7 @@ class CategoryController extends Controller
         }
     }
 
-    public function destroy(Request $request, Category $category)
+    public function destroy(Request $request, Category $category) : CategoryResource|JsonResponse|Response
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 

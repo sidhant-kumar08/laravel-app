@@ -20,7 +20,7 @@ use App\Helpers\AppHelper;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse|ProductCollection
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -30,14 +30,14 @@ class ProductController extends Controller
 
         $products = Product::where("user_id", $userId)->get();
 
-        if($products->isEmpty()){
-            return response()->json(["message" => "No data found"], 404);//user_id is not exist in that product table
+        if ($products->isEmpty()) {
+            return response()->json(["message" => "No data found"], 404); //user_id is not exist in that product table
         }
 
         return new ProductCollection($products);
     }
 
-    public function store(ProductStoreRequest $request)
+    public function store(ProductStoreRequest $request): JsonResponse|ProductResource
     {
 
         $userId = AppHelper::checkUserIdInRequest($request);
@@ -63,7 +63,7 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    public function update(ProductUpdateRequest $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product): JsonResponse|ProductResource
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -86,7 +86,7 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    public function destroy(Request $request, Product $product)
+    public function destroy(Request $request, Product $product): JsonResponse|Response
     {
         $userId = AppHelper::checkUserIdInRequest($request);
 
@@ -108,4 +108,3 @@ class ProductController extends Controller
         }
     }
 }
-
