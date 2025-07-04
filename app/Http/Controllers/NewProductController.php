@@ -27,7 +27,7 @@ class NewProductController extends Controller
                 $Products = $category->products;
                 return response()->json(ProductResource::collection($Products), 200);
             } else if ($filter == "my") {
-                $userId = $request->query("user_id");
+                $userId = $request->user()->id;
                 
                 $user = User::find($userId);
                 
@@ -52,7 +52,7 @@ class NewProductController extends Controller
     public function store(ProductStoreRequest $request, Category $category): JsonResponse|ProductResource
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -87,7 +87,7 @@ class NewProductController extends Controller
     public function update(ProductUpdateRequest $request, $category, Product $product): JsonResponse|ProductResource
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -116,7 +116,7 @@ class NewProductController extends Controller
     {
 
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 

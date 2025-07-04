@@ -21,7 +21,8 @@ class CategoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $userId = $request->query("user_id");
+            
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -40,7 +41,7 @@ class CategoryController extends Controller
     public function store(CategoryStoreRequest $request): CategoryResource|JsonResponse
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -59,7 +60,7 @@ class CategoryController extends Controller
     public function show(Request $request, Category $category)
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -79,7 +80,7 @@ class CategoryController extends Controller
     public function update(CategoryUpdateRequest $request, Category $category): CategoryResource|JsonResponse
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 
@@ -101,7 +102,7 @@ class CategoryController extends Controller
     public function destroy(Request $request, Category $category): CategoryResource|JsonResponse|Response
     {
         try {
-            $userId = $request->query("user_id");
+            $userId = $request->user()->id;
 
             $user = User::find($userId);
 

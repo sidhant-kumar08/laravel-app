@@ -17,15 +17,16 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::apiResource('categories', App\Http\Controllers\CategoryController::class)->middleware(CheckUserId::class);
+Route::apiResource('categories', App\Http\Controllers\CategoryController::class)->middleware(["auth:sanctum", CheckUserId::class]);
 
 // Route::apiResource('products', App\Http\Controllers\ProductController::class)->middleware(CheckUserId::class);
 
-Route::apiResource('categories.products', App\Http\Controllers\NewProductController::class)->middleware(CheckUserId::class);
+Route::apiResource('categories.products', App\Http\Controllers\NewProductController::class)->middleware(["auth:sanctum", CheckUserId::class]);
 
 
 
-Route::post('user', [UserController::class, 'store']);
+Route::post('register', [UserController::class, 'store']);
+Route::post('login', [UserController::class, 'login']);
 
 
 
