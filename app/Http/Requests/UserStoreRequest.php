@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
 
 class UserStoreRequest extends FormRequest
 {
@@ -23,7 +24,8 @@ class UserStoreRequest extends FormRequest
     {
         return [
             "name" => 'required|max:50|string',
-            "email" => 'required|email|unique:users'
+            "email" => 'required|email|unique:users',
+            "password" => 'required'
         ];
     }
 }
