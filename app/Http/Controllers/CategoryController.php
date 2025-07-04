@@ -18,7 +18,7 @@ use Throwable;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request): CategoryCollection|JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
             $userId = $request->query("user_id");
@@ -31,7 +31,7 @@ class CategoryController extends Controller
 
             $categories = Category::where("user_id", $userId)->get();
 
-            return new CategoryCollection($categories);
+            return response()->json(CategoryResource::collection($categories));
         } catch (Throwable $e) {
             return response()->json(["message" => "Internal Server Error"], 500);
         }

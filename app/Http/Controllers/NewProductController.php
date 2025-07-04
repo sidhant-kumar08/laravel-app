@@ -25,7 +25,7 @@ class NewProductController extends Controller
 
             if ($filter == "all") {
                 $Products = $category->products;
-                return response()->json(["data" => $Products], 200);
+                return response()->json(ProductResource::collection($Products), 200);
             } else if ($filter == "my") {
                 $userId = $request->query("user_id");
                 

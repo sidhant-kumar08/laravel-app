@@ -17,17 +17,14 @@ class ProductFactory extends Factory
      */
     protected $model = Product::class;
 
-    /**
-     * Define the model's default state.
-     */
     public function definition(): array
     {
         return [
             'name' => fake()->name(),
             'description' => fake()->text(),
             'price' => fake()->numberBetween(0, 10000),
-            'category_id' => Category::factory(),
-            'user_id' => User::factory(),
+            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
         ];
     }
 }

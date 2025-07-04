@@ -1,14 +1,14 @@
 models:
   # ...
   Category:
-      name: string:50
+      name: string:100
       description: string
       user_id: id foreign
       relationships:
         hasMany: Product
 
   Product:
-      name: string:50
+      name: string:100
       description: string
       price: integer
       category_id: id foreign
@@ -17,7 +17,7 @@ models:
         belongsTo: Category, User
 
   User:
-      name: string:24
+      name: string:100
       email: string
       relationships: 
         hasMany: Product, Category
