@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckUserId;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
@@ -16,13 +17,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::apiResource('categories', App\Http\Controllers\CategoryController::class);
-Route::get('categories/getUser/{category}', [CategoryController::class, "getRelatedUser"]);
+Route::apiResource('categories', App\Http\Controllers\CategoryController::class)->middleware(CheckUserId::class);
+
+// Route::apiResource('products', App\Http\Controllers\ProductController::class)->middleware(CheckUserId::class);
+
+Route::apiResource('categories.products', App\Http\Controllers\NewProductController::class)->middleware(CheckUserId::class);
 
 
-Route::apiResource('products', App\Http\Controllers\ProductController::class);
-Route::get('products/getCategory/{product}', [ProductController::class, "getCategory"]);
-Route::get('products/getUser/{product}', [ProductController::class, "getRelatedUser"]);
 
 Route::post('user', [UserController::class, 'store']);
 

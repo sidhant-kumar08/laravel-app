@@ -13,49 +13,45 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 
-//custom
-use App\Helpers\AppHelper;
-
-
+use Throwable;
 
 class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse|ProductCollection
     {
-        $userId = AppHelper::checkUserIdInRequest($request);
+        try {
+            $userId = $request->query("user_id");
 
-        if ($userId == -1) {
-            return response()->json(["message" => "Please provide userId"], 400);
+            $products = Product::where("user_id", $userId)->get();
+
+            if ($products->isEmpty()) {
+                return response()->json(["message" => "No data found"], 404); //user_id is not exist in that product table
+            }
+
+            return new ProductCollection($products);
+        } catch (Throwable $e) {
+            return response()->json(["message" => "Internal Server Error"], 500);
         }
-
-        $products = Product::where("user_id", $userId)->get();
-
-        if ($products->isEmpty()) {
-            return response()->json(["message" => "No data found"], 404); //user_id is not exist in that product table
-        }
-
-        return new ProductCollection($products);
     }
 
     public function store(ProductStoreRequest $request): JsonResponse|ProductResource
     {
 
-        $userId = AppHelper::checkUserIdInRequest($request);
+        try {
+            $userId = $request->query("user_id");
 
-        if ($userId == -1) {
-            return response()->json(["message" => "Please provide userId"], 400);
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json(["message" => "Invalid user"], 400);
+            }
+
+            $product = Product::create($request->validated() + ["user_id" => $userId]);
+
+            return new ProductResource($product);
+        } catch (Throwable $e) {
+            return response()->json(["message" => "Internal Server Error"], 500);
         }
-
-        $user = User::find($userId);
-
-        if (!$user) {
-            return response()->json(["message" => "Invalid user"], 400);
-        }
-
-
-        $product = Product::create($request->validated() + ["user_id" => $userId]);
-
-        return new ProductResource($product);
     }
 
     public function show(Request $request, Product $product): ProductResource
@@ -65,46 +61,46 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, Product $product): JsonResponse|ProductResource
     {
-        $userId = AppHelper::checkUserIdInRequest($request);
+        try {
+            $userId = $request->query("user_id");
 
-        if ($userId == -1) {
-            return response()->json(["message" => "Please provide userId"], 400);
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json(["message" => "Invalid user"], 400);
+            }
+
+            if ($product->user_id == $userId) {
+                $product->update($request->validated());
+            } else {
+                return new JsonResponse(["message" => "Not authorized"], 401);
+            }
+
+            return new ProductResource($product);
+        } catch (Throwable $e) {
+            return response()->json(["message" => "Internal Server Error"], 500);
         }
-
-        $user = User::find($userId);
-
-        if (!$user) {
-            return response()->json(["message" => "Invalid user"], 400);
-        }
-
-        if ($product->user_id == $userId) {
-            $product->update($request->validated());
-        } else {
-            return new JsonResponse(["message" => "Not authorized"], 401);
-        }
-
-        return new ProductResource($product);
     }
 
     public function destroy(Request $request, Product $product): JsonResponse|Response
     {
-        $userId = AppHelper::checkUserIdInRequest($request);
+        try {
+            $userId = $request->query("user_id");
 
-        if ($userId == -1) {
-            return response()->json(["message" => "Please provide userId"], 400);
-        }
+            $user = User::find($userId);
 
-        $user = User::find($userId);
+            if (!$user) {
+                return response()->json(["message" => "Invalid user"], 400);
+            }
 
-        if (!$user) {
-            return response()->json(["message" => "Invalid user"], 400);
-        }
-
-        if ($product->user_id == $userId) {
-            $product->delete();
-            return response()->noContent();
-        } else {
-            return response()->json(["message" => "Not Authorized"], 401);
+            if ($product->user_id == $userId) {
+                $product->delete();
+                return response()->noContent();
+            } else {
+                return response()->json(["message" => "Not Authorized"], 401);
+            }
+        } catch (Throwable $e) {
+            return response()->json(["message" => "Internal Server Error"], 500);
         }
     }
 }

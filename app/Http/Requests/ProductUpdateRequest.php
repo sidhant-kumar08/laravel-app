@@ -22,7 +22,6 @@ class ProductUpdateRequest extends FormRequest
         return [
             'name' => ['string', 'max:20'],
             'price' => ['integer'],
-            'category_id' => ['integer', 'exists:categories,id'],
         ];
     }
 }
