@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckTokenExpiry;
 use App\Http\Middleware\CheckUserId;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Resources\CategoryResource;
@@ -17,11 +18,12 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::apiResource('categories', App\Http\Controllers\CategoryController::class)->middleware(["auth:sanctum", CheckUserId::class]);
-
+Route::apiResource('categories', App\Http\Controllers\CategoryController::class)->middleware("auth:sanctum");
+;
 // Route::apiResource('products', App\Http\Controllers\ProductController::class)->middleware(CheckUserId::class);
 
-Route::apiResource('categories.products', App\Http\Controllers\NewProductController::class)->middleware(["auth:sanctum", CheckUserId::class]);
+Route::apiResource('categories.products', App\Http\Controllers\NewProductController::class)->middleware("auth:sanctum");
+;
 
 
 

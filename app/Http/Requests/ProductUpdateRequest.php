@@ -22,6 +22,7 @@ class ProductUpdateRequest extends FormRequest
         return [
             'name' => ['string', 'max:20'],
             'price' => ['integer'],
+            'description' => ['string']
         ];
     }
 }

@@ -29,12 +29,6 @@ class NewProductController extends Controller
             } else if ($filter == "my") {
                 $userId = $request->user()->id;
                 
-                $user = User::find($userId);
-                
-                if (!$user) {
-                    return response()->json(["message" => "Invalid user"], 400);
-                }
-                
                 $Products = Product::where("user_id", $userId)->get();
 
                 return response()->json(ProductResource::collection($Products), 200);
@@ -54,17 +48,12 @@ class NewProductController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
-
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
-
             $data = $request->validated() + ["category_id" => $category->id, "user_id" => $userId];
             $product = Product::create($data);
 
             return new ProductResource($product);
         } catch (Throwable $e) {
+            throw $e;
             return response()->json(["message" => "Internal server error"], 500);
         }
     }
@@ -89,12 +78,6 @@ class NewProductController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
-
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
-
             if ($product->category_id != $category) {
                 return response()->json(["message" => "Please check all details"], 404);
             }
@@ -118,11 +101,6 @@ class NewProductController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
-
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
 
             if ($product->category_id != $category) {
                 return response()->json(["message" => "Please check all details"], 404);

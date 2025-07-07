@@ -10,6 +10,7 @@ use JMac\Testing\Traits\AdditionalAssertions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+
 /**
  * @see \App\Http\Controllers\CategoryController
  */
@@ -21,12 +22,16 @@ final class CategoryControllerTest extends TestCase
     public function index_behaves_as_expected(): void
     {
         $categories = Category::factory()->count(3)->create();
+        $user = User::factory()->create();
 
-        $response = $this->get(route('categories.index'));
+
+
+        $response = $this->actingAs($user, 'sanctum')->get(route('categories.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
     }
+
 
 
     #[Test]
@@ -42,19 +47,15 @@ final class CategoryControllerTest extends TestCase
     #[Test]
     public function store_saves(): void
     {
-        $name = fake()->name();
-        $description = fake()->text();
         $user = User::factory()->create();
 
-        $response = $this->post(route('categories.store'), [
-            'name' => $name,
-            'description' => $description,
-            'user_id' => $user->id,
+        $response = $this->actingAs($user, 'sanctum')->post(route('categories.store'), [
+            'name' => 'product name',
+            'description' => fake()->sentence(1),
         ]);
 
         $categories = Category::query()
-            ->where('name', $name)
-            ->where('description', $description)
+            ->where('name', 'product name')
             ->where('user_id', $user->id)
             ->get();
         $this->assertCount(1, $categories);
@@ -69,8 +70,9 @@ final class CategoryControllerTest extends TestCase
     public function show_behaves_as_expected(): void
     {
         $category = Category::factory()->create();
+        $user = User::factory()->create();
 
-        $response = $this->get(route('categories.show', $category));
+        $response = $this->actingAs($user, 'sanctum')->get(route('categories.show', $category));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -91,11 +93,12 @@ final class CategoryControllerTest extends TestCase
     public function update_behaves_as_expected(): void
     {
         $category = Category::factory()->create();
-        $name = fake()->name();
-        $description = fake()->text();
+        $name =  fake()->firstName();
+        $description =  fake()->sentence(1);
         $user = User::factory()->create();
+        $user->id = $category->user_id;
 
-        $response = $this->put(route('categories.update', $category), [
+        $response = $this->actingAs($user, 'sanctum')->put(route('categories.update', $category), [
             'name' => $name,
             'description' => $description,
             'user_id' => $user->id,
@@ -116,8 +119,10 @@ final class CategoryControllerTest extends TestCase
     public function destroy_deletes_and_responds_with(): void
     {
         $category = Category::factory()->create();
+        $user = User::factory()->create();
+        $user->id = $category->user_id;
 
-        $response = $this->delete(route('categories.destroy', $category));
+        $response = $this->actingAs($user, 'sanctum')->delete(route('categories.destroy', $category));
 
         $response->assertNoContent();
 

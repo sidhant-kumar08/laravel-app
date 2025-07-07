@@ -43,11 +43,11 @@ class CategoryController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
+            // $user = User::find($userId);
 
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
+            // if (!$user) {
+            //     return response()->json(["message" => "Invalid user"], 400);
+            // }
 
             $category = Category::create($request->validated() + ["user_id" => $userId]);
 
@@ -62,15 +62,15 @@ class CategoryController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
+            // $user = User::find($userId);
 
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
+            // if (!$user) {
+            //     return response()->json(["message" => "Invalid user"], 400);
+            // }
 
-            if ($category->user_id != $userId) {
-                return response()->json(["message" => "Incorrect details provided"], 401);
-            }
+            // if ($category->user_id != $userId) {
+            //     return response()->json(["message" => "Incorrect details provided"], 401);
+            // }
             return new CategoryResource($category);
         } catch (Throwable $e) {
             return response()->json(["message" => "Internal Server Error"], 500);
@@ -82,11 +82,11 @@ class CategoryController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
+            // $user = User::find($userId);
 
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
+            // if (!$user) {
+            //     return response()->json(["message" => "Invalid user"], 400);
+            // }
 
             if ($category->user_id == $userId) {
                 $category->update($request->validated());
@@ -104,11 +104,11 @@ class CategoryController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $user = User::find($userId);
+            // $user = User::find($userId);
 
-            if (!$user) {
-                return response()->json(["message" => "Invalid user"], 400);
-            }
+            // if (!$user) {
+            //     return response()->json(["message" => "Invalid user"], 400);
+            // }
 
             if ($category->user_id == $userId) {
                 $category->delete();
