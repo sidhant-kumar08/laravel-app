@@ -16,30 +16,29 @@ class NewProductControllerTest extends TestCase
     public function test_index(): void
     {
 
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $products = Product::factory()->count(5)->create();
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user, 'sanctum')->get(route('categories.products.index', ['category' => $category->id, 'filter' => 'all']));
+        $response = $this->actingAs($category->user, 'sanctum')->get(route('categories.products.index', ['category' => $category->id, 'filter' => 'all']));
 
         $response->assertOk();
         $response->assertJsonStructure();
 
         $this->assertCount(5, $products);
-        
     }
 
     public function test_store_saves()
     {
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user, 'sanctum')->post(route('categories.products.store', ['name' => 'testName', 'description' => 'testDesc', 'price' => '10000', 'category_id' => $category->id, 'user_id' => $user->id, 'category' => $category->id]));
+        $response = $this->actingAs($category->user, 'sanctum')->post(route('categories.products.store', ['name' => 'testName', 'description' => 'testDesc', 'price' => '10000', 'category_id' => $category->id, 'user_id' => $category->user->id, 'category' => $category->id]));
 
 
         $products = Product::query()
             ->where('name', 'testName')
-            ->where('user_id', $user->id)
+            ->where('user_id', $category->user->id)
             ->where('category_id', $category->id)
             ->get();
 
@@ -52,10 +51,10 @@ class NewProductControllerTest extends TestCase
     public function test_show_behaves_as_expected()
     {
 
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $product = Product::factory()->create();
 
-        $response = $this->actingAs($user, 'sanctum')->get(route('categories.products.show', ['product' => $product, 'category' => $product->category_id]));
+        $response = $this->actingAs($product->user, 'sanctum')->get(route('categories.products.show', ['product' => $product, 'category' => $product->category_id]));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -64,17 +63,17 @@ class NewProductControllerTest extends TestCase
     public function test_update_behaves_as_expected()
     {
 
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $product = Product::factory()->create();
         $name = fake()->firstName();
         $description = fake()->sentence(1);
         $price = fake()->numberBetween(0, 10000);
 
-        $response = $this->actingAs($user, 'sanctum')->put(route('categories.products.update', ['category' => $product->category_id, 'product' => $product->id]),  [
+        $response = $this->actingAs($product->user, 'sanctum')->put(route('categories.products.update', ['category' => $product->category_id, 'product' => $product->id]),  [
             'name' => $name,
             'description' => $description,
             'price' => $price,
-            'user_id' => $user->id,
+            'user_id' => $product->user->id,
             'category_id' => $product->category_id
         ]);
 
@@ -86,58 +85,56 @@ class NewProductControllerTest extends TestCase
         $this->assertEquals($name, $product->name);
         $this->assertEquals($price, $product->price);
         $this->assertEquals($description, $product->description);
-        $this->assertEquals($user->id, $product->user_id);
+        $this->assertEquals($product->user->id, $product->user_id);
     }
 
-    public function test_destroy_behaves_as_expected(){
+    public function test_destroy_behaves_as_expected()
+    {
 
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $product = Product::factory()->create();
 
-        $product->user_id = $user->id;
+        // $product->user_id = $user->id;
 
-        $response = $this->actingAs($user, 'sanctum')->delete(route('categories.products.destroy', ['category' => $product->category_id, 'product' => $product->id]));
+        $response = $this->actingAs($product->user, 'sanctum')->delete(route('categories.products.destroy', ['category' => $product->category_id, 'product' => $product->id]));
 
         $response->assertNoContent();
         $this->assertModelMissing($product);
-
     }
 
-    public function test_index_invalid_filter(){
+    public function test_index_invalid_filter()
+    {
 
-        $user = User::factory()->create();
-        $products = Product::factory()->create();
+        // $user = User::factory()->create();
+        // $products = Product::factory()->create();
         $category = Category::factory()->create();
 
 
-        $response = $this->actingAs($user, 'sanctum')->get(route('categories.products.index', ['filter' => 'test', 'category' => $category->id]));
+        $response = $this->actingAs($category->user, 'sanctum')->get(route('categories.products.index', ['filter' => 'test', 'category' => $category->id]));
 
         $response->assertStatus(400);
         $response->assertJsonStructure();
     }
 
-    public function test_store_empty_body(){
+    public function test_store_empty_body()
+    {
 
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user, 'sanctum')->post(route('categories.products.store', ['category' => $category->id]));
+        $response = $this->actingAs($category->user, 'sanctum')->postJson(route('categories.products.store', ['category' => $category->id]));
 
-        $response->assertStatus(302);
-        $response->assertRedirect();
-
+        $response->assertStatus(422);
+        // $response->assertRedirect();
     }
 
-    public function test_wrong_show_id(){
-        $user = User::factory()->create();
+    public function test_wrong_show_id()
+    {
+        // $user = User::factory()->create();
         $product = Product::factory()->create();
 
-        $response = $this->actingAs($user, "sanctum")->get(route('categories.products.show', ['category' => 10, 'product' => $product->id]));
+        $response = $this->actingAs($product->user, "sanctum")->get(route('categories.products.show', ['category' => 10, 'product' => $product->id]));
 
         $response->assertStatus(404);
-
     }
-
-    
-
 }

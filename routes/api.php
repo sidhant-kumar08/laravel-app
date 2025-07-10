@@ -27,8 +27,8 @@ Route::apiResource('categories.products', App\Http\Controllers\NewProductControl
 
 
 
-Route::post('register', [UserController::class, 'store']);
-Route::post('login', [UserController::class, 'login']);
+Route::post('register', [UserController::class, 'store'])->name('register');
+Route::post('login', [UserController::class, 'login'])->name('login');
 
 
 

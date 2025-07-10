@@ -72,7 +72,7 @@ final class CategoryControllerTest extends TestCase
         $category = Category::factory()->create();
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user, 'sanctum')->get(route('categories.show', $category));
+        $response = $this->actingAs($category->user, 'sanctum')->get(route('categories.show', $category));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -95,13 +95,13 @@ final class CategoryControllerTest extends TestCase
         $category = Category::factory()->create();
         $name =  fake()->firstName();
         $description =  fake()->sentence(1);
-        $user = User::factory()->create();
-        $user->id = $category->user_id;
+        // $user = User::factory()->create();
+        // $user->id = $category->user_id;
 
-        $response = $this->actingAs($user, 'sanctum')->put(route('categories.update', $category), [
+        $response = $this->actingAs($category->user, 'sanctum')->put(route('categories.update', $category), [
             'name' => $name,
             'description' => $description,
-            'user_id' => $user->id,
+            'user_id' => $category->user->id,
         ]);
 
         $category->refresh();
@@ -111,7 +111,7 @@ final class CategoryControllerTest extends TestCase
 
         $this->assertEquals($name, $category->name);
         $this->assertEquals($description, $category->description);
-        $this->assertEquals($user->id, $category->user_id);
+        $this->assertEquals($category->user->id, $category->user_id);
     }
 
 
@@ -119,10 +119,10 @@ final class CategoryControllerTest extends TestCase
     public function destroy_deletes_and_responds_with(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
-        $user->id = $category->user_id;
+        // $user = User::factory()->create();
+        // $user->id = $category->user_id;
 
-        $response = $this->actingAs($user, 'sanctum')->delete(route('categories.destroy', $category));
+        $response = $this->actingAs($category->user, 'sanctum')->delete(route('categories.destroy', $category));
 
         $response->assertNoContent();
 
